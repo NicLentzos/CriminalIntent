@@ -56,7 +56,14 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         });
 
         mDateButton = (Button)v.findViewById(R.id.crime_date);
-        mDateButton.setText(mCrime.getDate().toString());
+        //mDateButton.setText(mCrime.getDate().toString());
+        //mDateButton.setEnabled(false);
+
+        java.text.DateFormat mDateFormatter;
+        //Get a DateFormat object that is formatted for the current locale
+        mDateFormatter = android.text.format.DateFormat.getLongDateFormat(getActivity());
+        //Format the date and set the button text to the newly formatted date
+        mDateButton.setText(mDateFormatter.format(mCrime.getDate()));
         mDateButton.setEnabled(false);
 
         mSolvedCheckBox = (CheckBox)v.findViewById(R.id.crime_solved);
