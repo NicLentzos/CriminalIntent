@@ -52,6 +52,13 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+    }
+
     //implement onCreateView() to inflate fragment_crime.xml.
 
     @Override
