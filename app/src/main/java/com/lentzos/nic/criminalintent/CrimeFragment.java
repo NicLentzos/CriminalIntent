@@ -34,6 +34,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
+    private Button mReportButton;
 
     public static CrimeFragment newInstance(UUID crimeId){
         Bundle args = new Bundle();
@@ -67,6 +68,18 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         //view to the view's parent (false). You will add the view in the activity code instead.
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
         //the oncreateview() method is also the place to configure EditText and add a listener.
+
+        mReportButton = (Button) v.findViewById(R.id.crime_report);
+        mReportButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
+                i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
+                startActivity(i);
+            }
+        });
+
         mTitleField = (EditText)v.findViewById(R.id.crime_title);
         mTitleField.setText(mCrime.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
@@ -95,7 +108,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         //Get a DateFormat object that is formatted for the current locale
         mDateFormatter = android.text.format.DateFormat.getLongDateFormat(getActivity());
         //Format the date and set the button text to the newly formatted date
-        updateDate(mDateFormatter.format(mCrime.getDate()));
+        updateDate();
         //mDateButton.setEnabled(false);
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,8 +133,35 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         return v;
     }
 
-    private void updateDate(String format) {
-        mDateButton.setText(format);
+    //private void updateDate(String format) {
+    //    mDateButton.setText(format);
+    //}
+
+    private void updateDate() {
+        mDateButton.setText(mCrime.getDate().toString());
+    }
+
+    private String getCrimeReport() {
+        String solvedString = null;
+        if (mCrime.isSolved()) {
+            solvedString = getString(R.string.crime_report_solved);
+        } else {
+            solvedString = getString(R.string.crime_report_unsolved);
+        }
+
+        String dateFormat = "EEE, MMM, dd";
+        String dateString = android.text.format.DateFormat.format(dateFormat, mCrime.getDate()).toString();
+
+        String suspect = mCrime.getSuspect();
+        if (suspect == null) {
+            suspect = getString(R.string.crime_report_no_suspect);
+        } else {
+            suspect = getString(R.string.crime_report_suspect, suspect);
+        }
+
+        String report = getString(R.string.crime_report, mCrime.getTitle(), dateString, solvedString, suspect);
+
+        return report;
     }
 
     @Override
@@ -133,7 +173,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
-            updateDate(mCrime.getDate().toString());
+            updateDate();
         }
     }
 }
