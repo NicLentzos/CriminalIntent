@@ -29,11 +29,22 @@ public class Crime {
         mSolved = solved;
     }
 
+    public String getSuspect() {
+        return mSuspect;
+    }
+
+    public void setSuspect (String suspect) {
+        mSuspect = suspect;
+    }
+
     private boolean mSolved;
+    private String mSuspect;
 
     public Crime() {
-       this(UUID.randomUUID());
+
+        this(UUID.randomUUID());
     }
+
     public Crime(UUID id) {
         mId = id;
         mDate = new Date();
